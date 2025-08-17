@@ -1,9 +1,16 @@
 class TagsController < ApplicationController
   before_action :set_tag, only: [:show, :update, :destroy]
+  before_action :authenticate_user!, except: [:index, :show]
+ 
 
   # GET /tags
   def index
-    render json: Tag.all
+    if params[:q].present?
+      @tags = Tag.where("name ILIKE ?", "%#{params[:q]}%")
+    else
+      @tags = Tag.all
+    end
+    render json: @tags
   end
 
   # GET /tags/:id
